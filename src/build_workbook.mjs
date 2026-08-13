@@ -34,13 +34,13 @@ start.getRange("A1:H17").format.rowHeight=22; start.getRange("A:A").format.colum
 const input=wb.worksheets.getItem("Property Input");
 title(input,"A1:D2","Property & Buy Box Inputs"); section(input,"A4:D4","PROPERTY");
 const rows=[
- ["Property address","125 Sample Ave, Miami, FL","Text","Sample property"],
- ["Asking price",285000,"Currency","Seller ask"],
- ["Proposed purchase price",250000,"Currency","Your expected contract price"],
- ["After-repair value (ARV)",360000,"Currency","Verify with comparable sales"],
- ["Monthly market rent",2850,"Currency","Verify with rental comps"],
+ ["Property address",null,"Text","Linked from Deal Desk"],
+ ["Asking price",null,"Currency","Linked from Deal Desk"],
+ ["Proposed purchase price",null,"Currency","Linked from Deal Desk"],
+ ["After-repair value (ARV)",null,"Currency","Linked from Deal Desk"],
+ ["Monthly market rent",null,"Currency","Linked from Deal Desk"],
  ["Other monthly income",0,"Currency","Parking, laundry, etc."],
- ["Rehab budget",42000,"Currency","Before contingency"],
+ ["Rehab budget",null,"Currency","Linked from Deal Desk"],
  ["Rehab contingency",0.15,"Percent","Recommended buffer"],
  ["Annual property taxes",4200,"Currency","Current or projected"],
  ["Annual insurance",3000,"Currency","Obtain a quote"],
@@ -62,13 +62,16 @@ const rows=[
  ["End-buyer target profit",45000,"Currency","Editable buyer requirement"]
 ];
 input.getRange("A5:D30").values=rows;
+input.getRange("B5:B9").formulas=[["='Quick Analysis'!B7"],["='Quick Analysis'!B8"],["='Quick Analysis'!B9"],["='Quick Analysis'!B10"],["='Quick Analysis'!B11"]];
+input.getRange("B11").formulas=[["='Quick Analysis'!B12"]];
 input.getRange("A5:A30").format.font={bold:true,color:navy}; input.getRange("B5:B30").format={fill:"#EFF6FF",font:{color:"#0000FF"}};
 input.getRange("D5:D30").format={font:{color:gray},wrapText:true}; input.getRange("B6:B11").format.numberFormat=money; input.getRange("B13:B15").format.numberFormat=money; input.getRange("B20:B20").format.numberFormat=money; input.getRange("B24:B25").format.numberFormat=money; input.getRange("B28:B30").format.numberFormat=money;
 input.getRange("B12:B12").format.numberFormat=pct; input.getRange("B16:B18").format.numberFormat=pct; input.getRange("B21:B21").format.numberFormat=pct; input.getRange("B9:B9").format.numberFormat=pct; input.getRange("B22:B22").format.numberFormat=pct;
 input.freezePanes.freezeRows(4); input.getRange("A:A").format.columnWidth=30; input.getRange("B:B").format.columnWidth=18; input.getRange("C:C").format.columnWidth=13; input.getRange("D:D").format.columnWidth=34;
 
 const fin=wb.worksheets.getItem("Financing"); title(fin,"A1:D2","Financing & Acquisition Cash"); section(fin,"A4:D4","LOAN INPUTS");
-fin.getRange("A5:D12").values=[["Financing type","Amortizing","Input","Cash or Amortizing"],["Down payment",0.2,"Input","Percent of purchase price"],["Annual interest rate",0.0725,"Input","Nominal annual rate"],["Loan term (years)",30,"Input","Amortization term"],["Loan points",0.01,"Input","Percent of loan amount"],["Other loan fees",1800,"Input","Dollar amount"],["Acquisition reserves",7500,"Input","Initial cash reserve"],["Monthly payment",null,"Formula","Principal and interest"]];
+fin.getRange("A5:D12").values=[["Financing type","Amortizing","Input","Cash or Amortizing"],["Down payment",null,"Input","Linked from Deal Desk"],["Annual interest rate",null,"Input","Linked from Deal Desk"],["Loan term (years)",null,"Input","Linked from Deal Desk"],["Loan points",0.01,"Input","Percent of loan amount"],["Other loan fees",1800,"Input","Dollar amount"],["Acquisition reserves",7500,"Input","Initial cash reserve"],["Monthly payment",null,"Formula","Principal and interest"]];
+fin.getRange("B6:B8").formulas=[["='Quick Analysis'!B13"],["='Quick Analysis'!B14"],["='Quick Analysis'!B15"]];
 fin.getRange("B5:B11").format={fill:"#EFF6FF",font:{color:"#0000FF"}}; fin.getRange("B6:B7").format.numberFormat=pct; fin.getRange("B9:B9").format.numberFormat=pct; fin.getRange("B10:B11").format.numberFormat=money;
 section(fin,"A14:D14","CALCULATED CAPITAL"); fin.getRange("A15:A21").values=[["Purchase price"],["Down payment dollars"],["Loan amount"],["Monthly principal & interest"],["Annual debt service"],["Loan points dollars"],["Total acquisition cash"]];
 fin.getRange("B15:B21").formulas=[["='Property Input'!B7"],["=IF(B5=\"Cash\",B15,B15*B6)"],["=MAX(0,B15-B16)"],["=IF(OR(B5=\"Cash\",B17=0),0,IF(B7=0,B17/(B8*12),-PMT(B7/12,B8*12,B17)))"],["=B18*12"],["=B17*B9"],["=B16+('Property Input'!B7*'Property Input'!B21)+B20+B10+B11"]];
@@ -94,16 +97,43 @@ wh.getRange("A5:A15").values=[["ARV"],["Repairs incl. contingency"],["Buyer targ
 wh.getRange("B5:B15").formulas=[["='Property Input'!B8"],["='Property Input'!B11*(1+'Property Input'!B12)"],["='Property Input'!B30"],["=B5*'Property Input'!B22"],["='Property Input'!B7*'Property Input'!B21"],["='Property Input'!B29"],["=MAX(0,B5-B6-B7-B8-B9-B10)"],["=B11+B10"],["=SUM(B6,B8,B9,B12)"],["=B5-B13"],["=B11-'Property Input'!B7"]];
 wh.getRange("B5:B15").format.numberFormat=money; wh.getRange("B5:B15").format.font={color:"#008000"}; section(wh,"A17:D17","VERDICT"); wh.getRange("A18:A19").values=[["Assignment fee supported"],["Proposed price is at/below MAO"]]; wh.getRange("B18:B19").formulas=[["=IF(B14>=B7,\"PASS\",\"FAIL\")"],["=IF('Property Input'!B7<=B11,\"PASS\",\"FAIL\")"]]; wh.getRange("A:A").format.columnWidth=35; wh.getRange("B:B").format.columnWidth=20; wh.getRange("C:D").format.columnWidth=18;
 
-const quick=wb.worksheets.getItem("Quick Analysis"); title(quick,"A1:H2","Quick Analysis | One Property, Three Strategies");
-quick.getRange("A4:H4").merge(); quick.getRange("A4:H4").values=[["Expected result based on the current sample inputs. Replace blue inputs on Property Input and Financing."]]; quick.getRange("A4:H4").format={fill:pale,font:{color:navy,bold:true}};
-quick.getRange("A6:B12").values=[["Property",null],["Proposed price",null],["Cash required",null],["Rental cash flow",null],["Flip profit",null],["Wholesale MAO",null],["Model status",null]];
-quick.getRange("B6:B12").formulas=[["='Property Input'!B5"],["='Property Input'!B7"],["='Financing'!B21"],["='Rental'!B20"],["='Flip'!B16"],["='Wholesale'!B11"],["='Checks'!B5"]];
-quick.getRange("B7:B11").format.numberFormat=money; quick.getRange("A6:A12").format={fill:light,font:{bold:true,color:navy}}; quick.getRange("B6:B12").format.font={color:"#008000",bold:true};
-quick.getRange("D6:H6").values=[["Strategy","Key result","Target","Status","What it means"]]; quick.getRange("D6:H6").format={fill:navy,font:{bold:true,color:"#FFFFFF"}};
-quick.getRange("D7:H9").values=[["Rental",null,null,null,"Monthly cash flow vs your Buy Box"],["Flip",null,null,null,"Expected profit vs your Buy Box"],["Wholesale",null,null,null,"Proposed price vs buyer-driven MAO"]];
-quick.getRange("E7:G9").formulas=[["='Rental'!B20","='Property Input'!B25","=IF(E7>=F7,\"GO\",\"REVIEW\")"],["='Flip'!B16","='Property Input'!B28","=IF(E8>=F8,\"GO\",\"REVIEW\")"],["='Wholesale'!B11","='Property Input'!B7","=IF(F9<=E9,\"GO\",\"NO-GO\")"]];
-quick.getRange("E7:F9").format.numberFormat=money; quick.getRange("D7:D9").format.font={bold:true,color:navy}; quick.getRange("G7:G9").format.font={bold:true};
-quick.getRange("A:A").format.columnWidth=22; quick.getRange("B:B").format.columnWidth=24; quick.getRange("C:C").format.columnWidth=3; quick.getRange("D:D").format.columnWidth=16; quick.getRange("E:G").format.columnWidth=16; quick.getRange("H:H").format.columnWidth=32;
+const quick=wb.worksheets.getItem("Quick Analysis"); title(quick,"A1:H2","DEAL DESK | Answer in 60 Seconds");
+quick.getRange("A4:H4").merge(); quick.getRange("A4:H4").values=[["Enter nine numbers. DealCheck tells you the best strategy, safest price, biggest risks, and next move."]]; quick.getRange("A4:H4").format={fill:pale,font:{color:navy,bold:true,size:11}};
+section(quick,"A6:B6","1 | ENTER THE DEAL");
+quick.getRange("A7:B15").values=[["Property","125 Sample Ave, Miami, FL"],["Asking price",285000],["Your offer",250000],["ARV",360000],["Monthly rent",2850],["Repairs",42000],["Down payment",0.2],["Interest rate",0.0725],["Loan term",30]];
+quick.getRange("A7:A15").format={fill:light,font:{bold:true,color:navy}}; quick.getRange("B7:B15").format={fill:"#EFF6FF",font:{color:"#0000FF",bold:true}};
+quick.getRange("B8:B12").format.numberFormat=money; quick.getRange("B13:B14").format.numberFormat=pct; quick.getRange("B15").format.numberFormat="0 \"years\"";
+
+section(quick,"D6:H6","2 | THE DECISION");
+quick.getRange("D7:D12").values=[["VERDICT"],["BEST STRATEGY"],["DEAL SCORE"],["MAX SAFE OFFER"],["CASH NEEDED"],["EXPECTED RESULT"]];
+quick.getRange("D7:D12").format={fill:light,font:{bold:true,color:navy}};
+quick.getRange("E7:H7").merge(); quick.getRange("E8:H8").merge(); quick.getRange("E9:H9").merge(); quick.getRange("E10:H10").merge(); quick.getRange("E11:H11").merge(); quick.getRange("E12:H12").merge();
+quick.getRange("E7").formulas=[["=IF(COUNT(B8:B12)<5,\"ADD MISSING NUMBERS\",IF(MAX(J22:J24)>=1,\"GO - MEETS YOUR TARGET\",IF(MAX(J22:J24)>=0.7,\"REVIEW - CLOSE, BUT NEGOTIATE\",\"NO-GO - PRICE IS TOO HIGH\")))"]];
+quick.getRange("E8").formulas=[["=IF(J22=MAX(J22:J24),\"RENTAL\",IF(J23=MAX(J22:J24),\"FLIP\",\"WHOLESALE\"))"]];
+quick.getRange("E9").formulas=[["=ROUND(MIN(100,MAX(J22:J24)*70+IF('Checks'!F6=\"OK\",10,0)+IF(B9<=E10,20,0)),0)"]];
+quick.getRange("E10").formulas=[["=MAX('Flip'!B19,'Wholesale'!B11)"]];
+quick.getRange("E11").formulas=[["='Financing'!B21"]];
+quick.getRange("E12").formulas=[["=IF(E8=\"RENTAL\",'Rental'!B20,IF(E8=\"FLIP\",'Flip'!B16,'Property Input'!B29))"]];
+quick.getRange("E7:H12").format={fill:"#FFFFFF",font:{bold:true,color:navy,size:12},verticalAlignment:"center"}; quick.getRange("E7:H7").format.font={bold:true,color:"#FFFFFF",size:14};
+quick.getRange("E10:H12").format.numberFormat=money; quick.getRange("E9:H9").format.numberFormat='0 \"/ 100\"';
+
+section(quick,"D14:H14","3 | WHY & WHAT TO DO NEXT");
+quick.getRange("D15:D18").values=[["TOP RISK"],["SECOND RISK"],["RESCUE PRICE"],["NEXT MOVE"]]; quick.getRange("D15:D18").format={fill:light,font:{bold:true,color:navy}};
+quick.getRange("E15:H15").merge(); quick.getRange("E16:H16").merge(); quick.getRange("E17:H17").merge(); quick.getRange("E18:H18").merge();
+quick.getRange("E15").formulas=[["=IF('Rental'!B20<'Property Input'!B25,\"Rental cash flow misses your target\",IF('Flip'!B16<'Property Input'!B28,\"Flip profit is too thin\",\"Verify ARV before offering\"))"]];
+quick.getRange("E16").formulas=[["=IF(B9>E10,\"Your offer is above the safe price\",IF('Rental'!B22<'Property Input'!B27,\"Debt coverage is too tight\",\"Rehab and holding costs need verification\"))"]];
+quick.getRange("E17").formulas=[["=E10"]];
+quick.getRange("E18").formulas=[["=IF(B9>E10,\"Lower the offer to \"&TEXT(E10,\"$#,##0\")&\" or negotiate a seller credit of \"&TEXT(B9-E10,\"$#,##0\"),\"Verify ARV, rent, repairs, taxes, and insurance before submitting the offer.\")"]];
+quick.getRange("E15:H18").format={wrapText:true,font:{color:navy}}; quick.getRange("E17:H17").format.numberFormat=money;
+
+quick.getRange("D21:H21").values=[["STRATEGY","RESULT","YOUR TARGET","STRENGTH","STATUS"]]; quick.getRange("D21:H21").format={fill:navy,font:{bold:true,color:"#FFFFFF"}};
+quick.getRange("D22:H24").values=[["Rental",null,null,null,null],["Flip",null,null,null,null],["Wholesale",null,null,null,null]];
+quick.getRange("E22:H24").formulas=[["='Rental'!B20","='Property Input'!B25","=IFERROR(E22/F22,0)","=IF(G22>=1,\"PASS\",IF(G22>=0.7,\"CLOSE\",\"FAIL\"))"],["='Flip'!B16","='Property Input'!B28","=IFERROR(E23/F23,0)","=IF(G23>=1,\"PASS\",IF(G23>=0.7,\"CLOSE\",\"FAIL\"))"],["='Wholesale'!B11","='Property Input'!B7","=IFERROR(E24/F24,0)","=IF(G24>=1,\"PASS\",IF(G24>=0.7,\"CLOSE\",\"FAIL\"))"]];
+quick.getRange("E22:F24").format.numberFormat=money; quick.getRange("G22:G24").format.numberFormat="0%";
+quick.getRange("J22:J24").formulas=[["=G22"],["=G23"],["=G24"]]; quick.getRange("J22:J24").format.font={color:"#FFFFFF"};
+quick.getRange("E7:H7").conditionalFormats.add("containsText",{text:"GO",format:{fill:green,font:{color:"#FFFFFF",bold:true}}}); quick.getRange("E7:H7").conditionalFormats.add("containsText",{text:"REVIEW",format:{fill:gold,font:{color:navy,bold:true}}}); quick.getRange("E7:H7").conditionalFormats.add("containsText",{text:"NO-GO",format:{fill:red,font:{color:"#FFFFFF",bold:true}}});
+quick.getRange("H22:H24").conditionalFormats.add("containsText",{text:"PASS",format:{fill:"#D9EAD3",font:{color:green,bold:true}}}); quick.getRange("H22:H24").conditionalFormats.add("containsText",{text:"CLOSE",format:{fill:"#FFF2CC",font:{color:"#8A5A00",bold:true}}}); quick.getRange("H22:H24").conditionalFormats.add("containsText",{text:"FAIL",format:{fill:"#F4CCCC",font:{color:red,bold:true}}});
+quick.freezePanes.freezeRows(6); quick.getRange("A:A").format.columnWidth=20; quick.getRange("B:B").format.columnWidth=23; quick.getRange("C:C").format.columnWidth=3; quick.getRange("D:D").format.columnWidth=18; quick.getRange("E:G").format.columnWidth=17; quick.getRange("H:H").format.columnWidth=24; quick.getRange("A1:H24").format.rowHeight=24;
 
 const checks=wb.worksheets.getItem("Checks"); title(checks,"A1:G2","Model Checks");
 checks.getRange("A4:G4").values=[["Check","Actual","Expected","Difference","Tolerance","Status","Fix hint"]]; checks.getRange("A4:G4").format={fill:navy,font:{bold:true,color:"#FFFFFF"}};
@@ -122,8 +152,8 @@ checks.getRange("F6:F11").conditionalFormats.add("containsText",{text:"OK",forma
 
 const outDir="/workspace/scratch/2ed71f09e1c4/outputs/dealcheck-pro"; await fs.mkdir(outDir,{recursive:true});
 for(const n of names){const png=await wb.render({sheetName:n,autoCrop:"all",scale:1,format:"png"});await fs.writeFile(`${outDir}/${n.replaceAll(" ","-").toLowerCase()}.png`,new Uint8Array(await png.arrayBuffer()));}
-const inspect=await wb.inspect({kind:"table",range:"Quick Analysis!A1:H12",include:"values,formulas",tableMaxRows:14,tableMaxCols:8,maxChars:8000});
+const inspect=await wb.inspect({kind:"table",range:"Quick Analysis!A1:H24",include:"values,formulas",tableMaxRows:26,tableMaxCols:8,maxChars:12000});
 const errors=await wb.inspect({kind:"match",searchTerm:"#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A",options:{useRegex:true,maxResults:100},summary:"final formula error scan"});
 await fs.writeFile(`${outDir}/verification.txt`,inspect.ndjson+"\n\n"+errors.ndjson);
-const xlsx=await SpreadsheetFile.exportXlsx(wb); await xlsx.save(`${outDir}/DealCheck-Pro-Sprint-1-MVP.xlsx`);
-console.log(JSON.stringify({output:`${outDir}/DealCheck-Pro-Sprint-1-MVP.xlsx`,inspect:inspect.ndjson,errors:errors.ndjson},null,2));
+const xlsx=await SpreadsheetFile.exportXlsx(wb); await xlsx.save(`${outDir}/DealCheck-Pro-Simple-Powerful-v0.2.xlsx`);
+console.log(JSON.stringify({output:`${outDir}/DealCheck-Pro-Simple-Powerful-v0.2.xlsx`,inspect:inspect.ndjson,errors:errors.ndjson},null,2));
