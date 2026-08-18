@@ -30,7 +30,7 @@ start.getRange("A8:H10").values=[
 start.getRange("A8:A10").format={fill:teal,font:{bold:true,color:"#FFFFFF",size:14},horizontalAlignment:"center"};
 start.getRange("B8:B10").format.font={bold:true,color:navy}; start.getRange("C8:H10").merge(true); start.getRange("C8:H10").format.wrapText=true;
 section(start,"A12:H12","COLOR LEGEND");
-start.getRange("A14:H17").values=[["Blue boxes","Type here","Green","Good","Yellow","Slow down","Red","Do not proceed yet"],["YES","Meets your goal","MAYBE","Negotiate price or terms first","NO","Does not work now","Version","0.4.0 RC"],[null,null,null,null,null,null,null,null],["Important","Educational estimates only. Double-check the address, value after repairs, rent, repair cost, taxes, insurance, and loan terms before acting.",null,null,null,null,null,null]];
+start.getRange("A14:H17").values=[["Blue boxes","Type here","Green","Good","Yellow","Slow down","Red","Do not proceed yet"],["YES","Meets your goal","MAYBE","Negotiate price or terms first","NO","Does not work now","Version","1.0"],[null,null,null,null,null,null,null,null],["Important","Educational estimates only. Double-check the address, value after repairs, rent, repair cost, taxes, insurance, and loan terms before acting.",null,null,null,null,null,null]];
 start.getRange("A14:A14").format.font={color:"#0000FF"}; start.getRange("E14:E14").format.font={color:"#008000"}; start.getRange("G14:H14").format.fill="#FFF2CC";
 start.getRange("B17:H17").merge(); start.getRange("B17:H17").format={wrapText:true,font:{italic:true,color:gray}};
 start.getRange("A1:H17").format.rowHeight=22; start.getRange("A:A").format.columnWidth=13; start.getRange("B:B").format.columnWidth=22; start.getRange("C:H").format.columnWidth=15;
@@ -115,6 +115,11 @@ quick.getRange("B15").dataValidation={rule:{type:"whole",operator:"between",form
 quick.getRange("A17:B17").merge(); quick.getRange("A17:B17").values=[["READY TO READ YOUR ANSWER?"]]; quick.getRange("A17:B17").format={fill:navy,font:{bold:true,color:"#FFFFFF"}};
 quick.getRange("A18").values=[["Required answers filled"]]; quick.getRange("B18").formulas=[["=COUNT(B8:B12)&\" of 5\""]];
 quick.getRange("A18").format={fill:light,font:{bold:true,color:navy}}; quick.getRange("B18").format={fill:"#FFFFFF",font:{bold:true,color:green,size:12},horizontalAlignment:"center"};
+quick.getRange("A19:H19").merge(); quick.getRange("A19:H19").values=[["SMART INPUT CHECK"]]; quick.getRange("A19:H19").format={fill:teal,font:{bold:true,color:"#FFFFFF"}};
+quick.getRange("A20:H20").merge(); quick.getRange("A20:H20").formulas=[["=IF(COUNT(B8:B12)<5,\"Waiting for the five money answers.\",IF(B10<=B9,\"CHECK ARV: fixed-up value should normally be higher than your offer.\",IF(B12>=B10,\"CHECK REPAIRS: repair cost is as high as, or higher than, the fixed-up value.\",IF(B11=0,\"RENT IS $0: rental will fail, but flip or wholesale may still work.\",IF(B9>B8,\"CHECK OFFER: your offer is above the seller's asking price.\",\"INPUTS LOOK USABLE: now verify ARV, rent, repairs, taxes, insurance, and financing.\")))))"]];
+quick.getRange("A20:H20").format={fill:"#E8F7F6",font:{bold:true,color:navy},wrapText:true,horizontalAlignment:"center"};
+quick.getRange("A20:H20").conditionalFormats.add("containsText",{text:"CHECK",format:{fill:"#FFF2CC",font:{color:"#8A5A00",bold:true}}});
+quick.getRange("A20:H20").conditionalFormats.add("containsText",{text:"RENT IS",format:{fill:"#FFF2CC",font:{color:"#8A5A00",bold:true}}});
 
 section(quick,"D6:H6","STEP 2 | READ YOUR ANSWER");
 quick.getRange("D7:D12").values=[["SHOULD I DO THIS?"],["BEST WAY TO MAKE MONEY"],["DEAL STRENGTH"],["DO NOT PAY MORE THAN"],["CASH NEEDED TO START"],["LIKELY PROFIT / INCOME"]];
@@ -155,10 +160,18 @@ checks.getRange("A4:G4").values=[["Check","Actual","Expected","Difference","Tole
 checks.getRange("A5:A11").values=[["Overall model status"],["Purchase price entered"],["ARV entered"],["Financing ties"],["Rental NOI ties"],["Flip project cost positive"],["Wholesale spread nonnegative"]];
 checks.getRange("B5:B11").formulas=[["=IF(COUNTIF(F6:F11,\"FAIL\")=0,\"CALCULATIONS OK\",\"MODEL REVIEW\")"],["='Property Input'!B7"],["='Property Input'!B8"],["='Financing'!B16+'Financing'!B17"],["='Rental'!B8+'Rental'!B16"],["='Flip'!B13"],["='Wholesale'!B14"]];
 checks.getRange("C6:C11").formulas=[["=0"],["=0"],["='Financing'!B15"],["='Rental'!B17"],["=0"],["=0"]];
-checks.getRange("D6:D11").formulas=[["=IF(B6>0,0,1)"],["=IF(B7>0,0,1)"],["=B8-C8"],["=B9-C9"],["=IF(B10>0,0,1)"],["=IF(B11>=0,0,1)"]]; checks.getRange("E6:E11").values=[[0],[0],[0.01],[0.01],[0],[0]];
+checks.getRange("D6:D11").formulas=[["=IF(B6>0,0,1)"],["=IF(B7>0,0,1)"],["=B8-C8"],["=B9-C9"],["=IF(B10>0,0,1)"],["=IF(B11>=0,0,1)"]]; checks.getRange("E6:E11").formulas=[["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0)"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0)"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0.01)"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0.01)"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0)"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",0)"]];
 checks.getRange("F6:F11").formulas=[["=IF(D6<=E6,\"OK\",\"FAIL\")"],["=IF(D7<=E7,\"OK\",\"FAIL\")"],["=IF(ABS(D8)<=E8,\"OK\",\"FAIL\")"],["=IF(ABS(D9)<=E9,\"OK\",\"FAIL\")"],["=IF(D10<=E10,\"OK\",\"FAIL\")"],["=IF(D11<=E11,\"OK\",\"FAIL\")"]];
-checks.getRange("G6:G11").values=[["Enter a proposed purchase price"],["Enter a verified ARV"],["Review down payment and loan amount"],["Review income and expense schedule"],["Review project costs"],["Reduce fee/price or improve buyer economics"]];
+checks.getRange("G6:G11").formulas=[["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Enter a proposed purchase price\")"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Enter a verified ARV\")"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Review down payment and loan amount\")"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Review income and expense schedule\")"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Review project costs\")"],["=IF(COUNT('Deal Desk'!B8:B12)<5,\"\",\"Reduce fee/price or improve buyer economics\")"]];
 checks.getRange("B6:E11").format.numberFormat="0.00"; checks.getRange("A:A").format.columnWidth=29; checks.getRange("B:F").format.columnWidth=15; checks.getRange("G:G").format.columnWidth=36; checks.getRange("G5:G11").format.wrapText=true;
+
+// Advanced sheets stay visually quiet until the five required money answers exist.
+const hideUntilReady=(sheetName,ranges)=>{const s=wb.worksheets.getItem(sheetName);for(const address of ranges){const r=s.getRange(address);const formulas=r.formulas;r.formulas=formulas.map(row=>row.map(f=>typeof f==="string"&&f.startsWith("=")?`=IF(COUNT('Deal Desk'!B8:B12)<5,"",${f.slice(1)})`:f));}};
+hideUntilReady("Financing",["B15:B21"]);
+hideUntilReady("Rental",["B5:B23","B26:B28"]);
+hideUntilReady("Flip",["B5:B20","B23:B24"]);
+hideUntilReady("Wholesale",["B5:B16","B19:B20"]);
+hideUntilReady("Checks",["B5:B11","C6:C11","D6:D11","F6:F11"]);
 
 for(const [sheetName,range] of [["Property Input","A3:D3"],["Financing","A3:D3"],["Rental","A3:D3"],["Flip","A3:D3"],["Wholesale","A3:D3"],["Checks","A3:G3"]]){
   const s=wb.worksheets.getItem(sheetName); s.getRange(range).merge(); s.getRange(range).formulas=[["=IF(COUNT('Deal Desk'!B8:B12)<5,\"WAITING - finish the five required blue answers on Deal Desk\",\"LIVE RESULTS - based on the current Deal Desk answers\")"]]; s.getRange(range).format={fill:"#FFF2CC",font:{bold:true,color:navy},horizontalAlignment:"center"};
@@ -181,5 +194,5 @@ const audit=testMode?{
  wholesale:(await wb.inspect({kind:"table",range:"Wholesale!A5:B20",include:"values,formulas",tableMaxRows:20,tableMaxCols:3,maxChars:7000})).ndjson,
  checks:(await wb.inspect({kind:"table",range:"Checks!A4:G11",include:"values,formulas",tableMaxRows:12,tableMaxCols:8,maxChars:7000})).ndjson,
 }:null;
-if(!testMode){await fs.writeFile(`${outDir}/verification.txt`,inspect.ndjson+"\n\n"+errors.ndjson);const xlsx=await SpreadsheetFile.exportXlsx(wb);await xlsx.save(`${outDir}/DealCheck-Pro-Release-Candidate-v0.4.xlsx`);}
-console.log(JSON.stringify({output:testMode?null:`${outDir}/DealCheck-Pro-Release-Candidate-v0.4.xlsx`,inspect:inspect.ndjson,errors:errors.ndjson,audit},null,2));
+if(!testMode){await fs.writeFile(`${outDir}/verification.txt`,inspect.ndjson+"\n\n"+errors.ndjson);const xlsx=await SpreadsheetFile.exportXlsx(wb);await xlsx.save(`${outDir}/DealCheck-Pro-v1.0.xlsx`);}
+console.log(JSON.stringify({output:testMode?null:`${outDir}/DealCheck-Pro-v1.0.xlsx`,inspect:inspect.ndjson,errors:errors.ndjson,audit},null,2));
