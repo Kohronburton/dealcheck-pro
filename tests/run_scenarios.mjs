@@ -18,6 +18,9 @@ const cases = [
   {name:"All-cash-equivalent down payment", data:{...base,downPayment:1}, check:o=>o.noFormulaErrors&&o.debtService===0},
   {name:"Offer exactly at wholesale MAO", data:{...base,offer:218970.87378640776}, check:o=>Math.abs(o.wholesaleResult-12000)<0.02&&o.wholesaleStatus==="PASS"},
   {name:"Offer one dollar above wholesale MAO", data:{...base,offer:218971.87378640776}, check:o=>o.wholesaleResult<12000&&o.wholesaleStatus!=="PASS"},
+  {name:"ARV below offer warning", data:{...base,offer:250000,arv:240000}, check:o=>o.smartCheck.startsWith("CHECK ARV")&&o.noFormulaErrors},
+  {name:"Offer above asking warning", data:{...base,asking:200000,offer:210000,arv:360000}, check:o=>o.smartCheck.startsWith("CHECK OFFER")&&o.noFormulaErrors},
+  {name:"Repair estimate exceeds ARV warning", data:{...base,repairs:400000}, check:o=>o.smartCheck.startsWith("CHECK REPAIRS")&&o.noFormulaErrors},
 ];
 
 const table = ndjson => JSON.parse(ndjson).values;
@@ -32,7 +35,7 @@ for(const tc of cases){
     verdict:desk[6][4], best:desk[7][4], score:desk[8][4], safeOffer:desk[9][4], cash:desk[10][4], expected:desk[11][4],
     filled:desk[17][1], offer:tc.data.offer??0, statuses:[desk[21][7],desk[22][7],desk[23][7]], rentalStatus:desk[21][7],flipStatus:desk[22][7],wholesaleStatus:desk[23][7],
     wholesaleResult:desk[23][4], debtService:financing["Annual debt service"], supportedAssignment:wholesale["Supported assignment fee at your offer"],
-    noFormulaErrors:raw.errors.includes("matched 0 entries"),
+    smartCheck:desk[19][0], noFormulaErrors:raw.errors.includes("matched 0 entries"),
   };
   let pass=false,error=null; try{pass=Boolean(tc.check(o));}catch(e){error=e.message;}
   results.push({name:tc.name,pass,error,observed:o});
@@ -59,6 +62,7 @@ const reconciliations=[
   {name:"Rental NOI reconciliation",actual:rentalRows["Net operating income (NOI)"],expected:noi,tolerance:0.02},
   {name:"Flip profit reconciliation",actual:flipRows["Net flip profit"],expected:flipProfit,tolerance:0.02},
   {name:"Wholesale supported-fee reconciliation",actual:wholesaleRows["Supported assignment fee at your offer"],expected:supportedAssignment,tolerance:0.02},
+  {name:"Flip total project cost reconciliation",actual:flipRows["Total project cost"],expected:flipProject,tolerance:0.02},
 ].map(x=>({...x,pass:Math.abs(x.actual-x.expected)<=x.tolerance}));
 
 const report={scenarioTests:results,reconciliations,scenarioPassed:results.filter(x=>x.pass).length,scenarioTotal:results.length,reconciliationPassed:reconciliations.filter(x=>x.pass).length,reconciliationTotal:reconciliations.length};
