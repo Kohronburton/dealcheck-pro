@@ -12,6 +12,21 @@ DealCheck Pro lets an investor enter a property once, compare rental and flip ou
 
 The workbook opens with a fully calculated sample deal so every formula, decision rule, and check can be inspected before entering a real property.
 
+## See the working model
+
+### Decision dashboard
+
+![DealCheck Pro decision dashboard](media/decision-dashboard.png)
+
+### Formula-driven downside testing
+
+![DealCheck Pro stress test](media/stress-test.png)
+
+### Visible integrity checks
+
+![DealCheck Pro model checks](media/model-checks.png)
+
+
 ## Five-minute workflow
 
 1. Open **Property Input**.
